@@ -1,23 +1,31 @@
 ```markdown
 # Active Directory Penetration Testing Lab
 
-A vulnerable AD lab environment for practicing CPTS-style penetration testing techniques. This lab includes multiple attack vectors and privilege escalation paths commonly found in real-world assessments.
+A vulnerable AD lab environment for practicing CPTS-style penetration testing 
+techniques. This lab includes multiple attack vectors and privilege escalation 
+paths commonly found in real-world assessments.
 
 ## 📁 Repository Contents
 
 ### `Setup.ps1`
-PowerShell script that automatically deploys a vulnerable Active Directory environment on your domain controller. It creates:
-- Vulnerable web application with SQL injection and file upload flaws
-- Multiple user accounts with weak configurations (AS-REP roasting, Kerberoasting)
-- Misconfigured permissions (DCSync rights, constrained delegation)
+PowerShell script that automatically deploys a vulnerable Active Directory 
+environment on your domain controller. 
+
+**Creates:**
+- Vulnerable web application (SQL injection, file upload flaws)
+- Multiple user accounts with weak configurations
+- Misconfigured permissions (DCSync, constrained delegation)
 - GPP passwords in SYSVOL
 - Several privilege escalation vectors
 - Intentionally weakened security settings
 
-**The script is fully dynamic** - it adapts to any domain name and automatically configures everything.
+**The script is fully dynamic** - adapts to any domain automatically.
 
-### `challenge-guide.html`
-Interactive challenge worksheet with 10 progressively difficult tasks covering the full attack chain from initial foothold to domain compromise. Includes:
+### `challenge_guide.html`
+Interactive challenge worksheet with 10 progressively difficult tasks 
+covering the full attack chain from initial foothold to domain compromise.
+
+**Features:**
 - Points system (1000 total points)
 - Built-in hints for each challenge
 - Answer validation
@@ -37,7 +45,7 @@ Interactive challenge worksheet with 10 progressively difficult tasks covering t
 
 2. **Run as Administrator**:
    ```powershell
-   .\CPTS-Lab-Setup.ps1
+   .\Setup.ps1
    ```
 
 3. **Reboot the DC** (required for LDAP signing changes):
@@ -46,7 +54,7 @@ Interactive challenge worksheet with 10 progressively difficult tasks covering t
    ```
 
 4. **Access the web application**:
-   - `http://DC-HOSTNAME/portal`
+   - URL: `http://DC-HOSTNAME/portal`
    - Guest credentials: `guest / guest123`
 
 ### Using the Challenge Guide
@@ -54,14 +62,12 @@ Interactive challenge worksheet with 10 progressively difficult tasks covering t
 1. **Open the HTML file** in any browser:
    ```bash
    # Just double-click the file, or:
-   firefox challenge-guide.html
-   # or
-   chrome challenge-guide.html
+   firefox challenge_guide.html
    ```
 
 2. **Work through challenges** in order (they build on each other)
 
-3. **Use hints** if you get stuck - each challenge has a hint button
+3. **Use hints** if stuck - each challenge has a hint button
 
 4. **Submit answers** to track your progress and score
 
@@ -69,9 +75,9 @@ Interactive challenge worksheet with 10 progressively difficult tasks covering t
 
 The lab includes multiple routes to domain compromise:
 
-- **Path 1**: Web app → Backup config leak → AS-REP roasting → Lateral movement
+- **Path 1**: Web app → Backup config → AS-REP roasting → Lateral movement
 - **Path 2**: GPP password → Instant Domain Admin
-- **Path 3**: Kerberoasting → Nested group abuse → Domain Admin
+- **Path 3**: Kerberoasting → Nested groups → Domain Admin
 - **Path 4**: DCSync rights abuse
 - **Path 5**: Constrained delegation exploitation
 
@@ -80,7 +86,7 @@ The lab includes multiple routes to domain compromise:
 To remove all vulnerable configurations:
 
 ```powershell
-.\CPTS-Lab-Setup.ps1 -Cleanup
+.\Setup.ps1 -Cleanup
 ```
 
 ## ⚠️ Important Notes
@@ -110,7 +116,7 @@ To remove all vulnerable configurations:
 | 9 | Kerberos delegation | 100 |
 | 10 | Domain compromise | 100 |
 
-Total: **1000 points**
+**Total: 1000 points**
 
 ## 🎓 Learning Objectives
 
