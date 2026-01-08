@@ -5,7 +5,7 @@ A vulnerable AD lab environment for practicing CPTS-style penetration testing
 techniques. This lab includes multiple attack vectors and privilege escalation 
 paths commonly found in real-world assessments.
 
-## 📁 Repository Contents
+## Repository Contents
 
 ### `Setup.ps1`
 PowerShell script that automatically deploys a vulnerable Active Directory 
@@ -31,7 +31,7 @@ covering the full attack chain from initial foothold to domain compromise.
 - Answer validation
 - Progress tracking
 
-## 🚀 Setup Instructions
+## Setup Instructions
 
 ### Prerequisites
 - Windows Server with Active Directory Domain Services installed
@@ -71,7 +71,7 @@ covering the full attack chain from initial foothold to domain compromise.
 
 4. **Submit answers** to track your progress and score
 
-## 🎯 Attack Paths Overview
+## Attack Paths Overview
 
 The lab includes multiple routes to domain compromise:
 
@@ -81,7 +81,7 @@ The lab includes multiple routes to domain compromise:
 - **Path 4**: DCSync rights abuse
 - **Path 5**: Constrained delegation exploitation
 
-## 🧹 Cleanup
+## Cleanup
 
 To remove all vulnerable configurations:
 
@@ -89,21 +89,21 @@ To remove all vulnerable configurations:
 .\Setup.ps1 -Cleanup
 ```
 
-## ⚠️ Important Notes
+## Important Notes
 
 - **For lab environments only** - never deploy in production
 - Script requires Domain Admin privileges
 - All configurations are intentionally insecure
 - Perfect for OSCP/CPTS/CRTP practice
 
-## 🛠️ Tools You'll Need
+## Tools You'll Need
 
 - Impacket suite (GetNPUsers, GetUserSPNs, secretsdump, psexec)
 - Hashcat or John the Ripper
 - Nmap
 - Optional: BloodHound, PowerView, CrackMapExec
 
-## 📊 Challenge Breakdown
+## Challenge Breakdown
 
 | Challenge | Focus Area | Points |
 |-----------|------------|--------|
@@ -118,7 +118,7 @@ To remove all vulnerable configurations:
 
 **Total: 1000 points**
 
-## 🎓 Learning Objectives
+## Learning Objectives
 
 - Active Directory enumeration techniques
 - Kerberos attacks (AS-REP, Kerberoasting)
@@ -129,5 +129,5 @@ To remove all vulnerable configurations:
 
 ---
 
-**Happy Hacking!** 🔓
+**Happy Hacking!** 
 ```
