@@ -1,107 +1,127 @@
-AD Pentesting Lab - Automated Setup
-Overview
-Automated deployment of an intentionally vulnerable Active Directory environment for penetration testing practice and certification preparation (OSCP, CPTS, CRTP, etc.).
+```markdown
+# Active Directory Penetration Testing Lab
 
-⚠️ WARNING: Creates critical vulnerabilities. Isolated lab environments only.
+A vulnerable AD lab environment for practicing CPTS-style penetration testing techniques. This lab includes multiple attack vectors and privilege escalation paths commonly found in real-world assessments.
 
-Requirements
-Windows Server with AD Domain Services
-Domain Controller role
-PowerShell 5.1+ with AD module
-Administrator privileges
-Quick Start
-powershell
-# Deploy lab
-.\Setup-CPTSLab.ps1
+## 📁 Repository Contents
 
-# Cleanup
-.\Setup-CPTSLab.ps1 -Cleanup
-Post-Install: Reboot the DC for LDAP changes to take effect.
+### `Setup.ps1`
+PowerShell script that automatically deploys a vulnerable Active Directory environment on your domain controller. It creates:
+- Vulnerable web application with SQL injection and file upload flaws
+- Multiple user accounts with weak configurations (AS-REP roasting, Kerberoasting)
+- Misconfigured permissions (DCSync rights, constrained delegation)
+- GPP passwords in SYSVOL
+- Several privilege escalation vectors
+- Intentionally weakened security settings
 
-What Gets Deployed
-Web Application
-Vulnerable IIS app at http://<DC>/portal
-SQL injection (login + search)
-Unrestricted file upload
-Exposed credentials at http://<DC>/backup/config.txt
-Guest login: guest / guest123
-Domain Users & Attack Vectors
-User	Password	Attack Vector
-alice.johnson	Alice2024!	AS-REP Roasting
-svc-sql	MyS3rviceP@ss!	Kerberoasting → DA
-svc-web	WebS3rv1ce!	Kerberoasting + Delegation
-john.doe	Welcome2024!	DCSync rights
-webadmin	W3bAdm1n2024!	GPP password → DA
-svc-iis	IISService123!	Found in backup config
-helpdesk	Help2024!	Found in backup config
-Privilege Escalation Paths
-AlwaysInstallElevated (registry)
-Unquoted service path
-Writable scheduled task
-SMB signing disabled
-LDAP signing disabled
-Nested group membership (SQL Admins → DA)
-Constrained delegation (svc-web → DC)
-Attack Chain Example
-bash
-# 1. Enumerate web app
-nmap -sV <DC-IP>
-curl http://<DC-IP>/backup/config.txt  # Get credentials
+**The script is fully dynamic** - it adapts to any domain name and automatically configures everything.
 
-# 2. AS-REP Roasting
-impacket-GetNPUsers <DOMAIN>/ -usersfile users.txt -dc-ip <DC-IP>
+### `challenge-guide.html`
+Interactive challenge worksheet with 10 progressively difficult tasks covering the full attack chain from initial foothold to domain compromise. Includes:
+- Points system (1000 total points)
+- Built-in hints for each challenge
+- Answer validation
+- Progress tracking
 
-# 3. Kerberoasting
-impacket-GetUserSPNs <DOMAIN>/svc-iis:IISService123! -dc-ip <DC-IP> -request
+## 🚀 Setup Instructions
 
-# 4. Crack svc-sql → Member of Domain Admins via SQL Admins group
+### Prerequisites
+- Windows Server with Active Directory Domain Services installed
+- Domain Controller role configured
+- PowerShell 5.1+ with ActiveDirectory module
+- Domain Admin privileges
 
-# 5. Alternative: Find GPP password in SYSVOL
-# Result: webadmin (Domain Admin)
+### Lab Deployment
 
-# 6. Alternative: DCSync with john.doe
-impacket-secretsdump <DOMAIN>/john.doe:Welcome2024!@<DC-IP>
+1. **Download the script** to your Domain Controller
 
-# 7. Domain Admin achieved
-Verification Steps
-powershell
-# Check IIS
-Get-Service W3SVC | Start-Service
-Invoke-WebRequest -Uri "http://localhost/portal" -UseBasicParsing
+2. **Run as Administrator**:
+   ```powershell
+   .\CPTS-Lab-Setup.ps1
+   ```
 
-# Verify users
-Get-ADUser -Filter * | Select Name, SamAccountName
+3. **Reboot the DC** (required for LDAP signing changes):
+   ```powershell
+   Restart-Computer -Force
+   ```
 
-# Check SPNs
-Get-ADUser -Filter {ServicePrincipalName -like "*"} -Properties ServicePrincipalName
-Flags
-C:\inetpub\wwwroot\portal\uploads\flag1.txt
-C:\WebBackup\flag2.txt
-C:\Users\Administrator\Desktop\flag.txt
-Troubleshooting
-Web app not accessible:
+4. **Access the web application**:
+   - `http://DC-HOSTNAME/portal`
+   - Guest credentials: `guest / guest123`
 
-powershell
-iisreset /restart
-Start-Service W3SVC
-Kerberoasting fails:
+### Using the Challenge Guide
 
-powershell
-# Verify SPNs exist
-Get-ADUser svc-sql -Properties ServicePrincipalName
-DCSync not working:
+1. **Open the HTML file** in any browser:
+   ```bash
+   # Just double-click the file, or:
+   firefox challenge-guide.html
+   # or
+   chrome challenge-guide.html
+   ```
 
-powershell
-# Check after reboot, verify permissions
-Get-ACL "AD:\$((Get-ADDomain).DistinguishedName)"
-Notes
-Script auto-detects domain configuration (works on any domain)
-LDAP changes require DC reboot
-Take VM snapshot before deployment
-Use cleanup mode to remove all changes
-Network Isolation
-Deploy on isolated virtual network only
-No production environment access
-No internet connectivity recommended
-For authorized testing and educational purposes only.
+2. **Work through challenges** in order (they build on each other)
 
+3. **Use hints** if you get stuck - each challenge has a hint button
+
+4. **Submit answers** to track your progress and score
+
+## 🎯 Attack Paths Overview
+
+The lab includes multiple routes to domain compromise:
+
+- **Path 1**: Web app → Backup config leak → AS-REP roasting → Lateral movement
+- **Path 2**: GPP password → Instant Domain Admin
+- **Path 3**: Kerberoasting → Nested group abuse → Domain Admin
+- **Path 4**: DCSync rights abuse
+- **Path 5**: Constrained delegation exploitation
+
+## 🧹 Cleanup
+
+To remove all vulnerable configurations:
+
+```powershell
+.\CPTS-Lab-Setup.ps1 -Cleanup
+```
+
+## ⚠️ Important Notes
+
+- **For lab environments only** - never deploy in production
+- Script requires Domain Admin privileges
+- All configurations are intentionally insecure
+- Perfect for OSCP/CPTS/CRTP practice
+
+## 🛠️ Tools You'll Need
+
+- Impacket suite (GetNPUsers, GetUserSPNs, secretsdump, psexec)
+- Hashcat or John the Ripper
+- Nmap
+- Optional: BloodHound, PowerView, CrackMapExec
+
+## 📊 Challenge Breakdown
+
+| Challenge | Focus Area | Points |
+|-----------|------------|--------|
+| 1-2 | Web enumeration & info disclosure | 175 |
+| 3-4 | AS-REP roasting & hash cracking | 175 |
+| 5 | Kerberoasting | 100 |
+| 6 | GPP password exploitation | 125 |
+| 7 | DCSync permissions | 125 |
+| 8 | Privilege escalation analysis | 100 |
+| 9 | Kerberos delegation | 100 |
+| 10 | Domain compromise | 100 |
+
+Total: **1000 points**
+
+## 🎓 Learning Objectives
+
+- Active Directory enumeration techniques
+- Kerberos attacks (AS-REP, Kerberoasting)
+- Credential harvesting from various sources
+- Permission abuse and privilege escalation
+- Lateral movement strategies
+- Complete domain compromise methodologies
+
+---
+
+**Happy Hacking!** 🔓
+```
