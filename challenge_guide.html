@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Active Directory Lab - Challenge Sheet</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.header {
+    background: #2c3e50;
+    color: white;
+    padding: 30px;
+    border-bottom: 4px solid #e74c3c;
+}
+
+.header h1 {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.header .info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    font-size: 0.95em;
+}
+
+.stats-bar {
+    background: #ecf0f1;
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-around;
+    border-bottom: 1px solid #ddd;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-label {
+    font-size: 0.85em;
+    color: #7f8c8d;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stat-value {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-top: 5px;
+}
+
+.content {
+    padding: 30px;
+}
+
+.challenge {
+    margin-bottom: 40px;
+    padding-bottom: 30px;
+    border-bottom: 2px solid #ecf0f1;
+}
+
+.challenge:last-child {
+    border-bottom: none;
+}
+
+.challenge-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.challenge-number {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.points-badge {
+    background: #3498db;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.challenge-title {
+    font-size: 1.2em;
+    color: #34495e;
+    margin-bottom: 15px;
+}
+
+.objective {
+    background: #e8f4f8;
+    border-left: 4px solid #3498db;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.hint-section {
+    margin: 15px 0;
+}
+
+.hint-btn {
+    background: #f39c12;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.hint-btn:hover {
+    background: #e67e22;
+}
+
+.hint-content {
+    display: none;
+    background: #fff9e6;
+    border: 1px solid #f39c12;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 4px;
+    font-size: 0.95em;
+}
+
+.hint-content.show {
+    display: block;
+}
+
+.answer-section {
+    margin-top: 20px;
+}
+
+.answer-label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.answer-input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #bdc3c7;
+    border-radius: 4px;
+    font-size: 1em;
+    font-family: 'Courier New', monospace;
+}
+
+.answer-input:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+.submit-btn {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 1em;
+    font-weight: 600;
+}
+
+.submit-btn:hover {
+    background: #229954;
+}
+
+.submit-btn:disabled {
+    background: #95a5a6;
+    cursor: not-allowed;
+}
+
+.result {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.result.correct {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.result.incorrect {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.footer {
+    background: #34495e;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 0.9em;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Active Directory Penetration Testing Lab</h1>
+        <div class="info">
+            <span>Target: xyz.com Domain</span>
+            <span>Total Challenges: 10</span>
+            <span>Total Points: 1000</span>
+        </div>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat">
+            <div class="stat-label">Completed</div>
+            <div class="stat-value" id="completedCount">0/10</div>
+        </div>
+        <div class="stat">
+            <div class="stat-label">Score</div>
+            <div class="stat-value" id="scoreCount">0/1000</div>
+        </div>
+        <div class="stat">
+            <div class="stat-label">Progress</div>
+            <div class="stat-value" id="progressPercent">0%</div>
+        </div>
+    </div>
+
+    <div class="content">
+        <!-- Challenge 1 -->
+        <div class="challenge">
+            <div class="challenge-header">
+                <div class="challenge-number">Challenge 1: Web Application Discovery</div>
+                <div class="points-badge">75 Points</div>
+            </div>
+            <div class="challenge-title">Initial Foothold via Web Portal</div>
+            <div class="objective">
+                <strong>Objective:</strong> Scan the target network and identify the web application running on the domain controller. Find the guest account credentials.
+            </div>
+            <div class="hint-section">
+                <button class="hint-btn" onclick="toggleHint(1)">💡 Show Hint</button>
+                <div class="hint-content" id="hint1">
+                    Use nmap to scan common web ports. The portal is accessible at <code>/portal</code>. Check the login page source or try default credentials.
+                </div>
+            </div>
+            <div class="answer-section">
+                <label class="answer-label">Submit the guest account username:</label>
+                <input type="text" class="answer-input" id="answer1" placeholder="username">
+                <button class="submit-btn" onclick="submitAnswer(1)">Submit</button>
+                <div id="result1"></div>
+            </div>
+        </div>
+
+        <!-- Challenge 2 -->
+        <div class="challenge">
+            <div class="challenge-header">
+                <div class="challenge-number">Challenge 2: Information Disclosure</div>
+                <div class="points-badge">100 Points</div>
+            </div>
+            <div class="challenge-title">Exposed Backup Configuration</div>
+            <div class="objective">
+                <strong>Objective:</strong> Enumerate the web server directories to find exposed backup files containing service account credentials.
+            </div>
+            <div class="hint-section">
+                <button class="hint-btn" onclick="toggleHint(2)">💡 Show Hint</button>
+                <div class="hint-content" id="hint2">
+                    Directory browsing is enabled. Look for virtual directories like <code>/backup</code>. Check for configuration files with credentials (config.txt, web.config, etc.).
+                </div>
+            </div>
+            <div class="answer-section">
+                <label class="answer-label">Submit the IIS service account username found in backup:</label>
+                <input type="text" class="answer-input" id="answer2" placeholder="username">
+                <button class="submit-btn" onclick="submitAnswer(2)">Submit</button>
+                <div id="result2"></div>
+            </div>
+        </div>
+
+        <!-- Challenge 3 -->
+        <div class="challenge">
+            <div class="challenge-header">
+                <div class="challenge-number">Challenge 3: Domain User Enumeration</div>
+                <div class="points-badge">75 Points</div>
+            </div>
+            <div class="challenge-title">AS-REP Roasting Attack</div>
+            <div class="objective">
+                <strong>Objective:</strong> Using credentials from the backup file, enumerate domain users and identify accounts vulnerable to AS-REP Roasting.
+            </div>
+            <div class="hint-section">
+                <button class="hint-btn" onclick="toggleHint(3)">💡 Show Hint</button>
+                <div class="hint-content" id="hint3">
+                    Use <code>GetNPUsers.py</code> with valid credentials to enumerate users. Look for accounts with "Do not require Kerberos preauthentication" enabled.
+                </div>
+            </div>
+            <div class="answer-section">
+                <label class="answer-label">Submit the AS-REP roastable username:</label>
+                <input type="text" class="answer-input" id="answer3" placeholder="username">
+                <button class="submit-btn" onclick="submitAnswer(3)">Submit</button>
+                <div id="result3"></div>
+            </div>
+        </div>
+
+        <!-- Challenge 4 -->
+        <div class="challenge">
+            <div class="challenge-header">
+                <div class="challenge-number">Challenge 4: Hash Cracking</div>
+                <div class="points-badge">100 Points</div>
+            </div>
+            <div class="challenge-title">Crack AS-REP Hash</div>
+            <div class="objective">
+                <strong>Objective:</strong> Extract the AS-REP hash and crack it to obtain the plaintext password.
+            </div>
+            <div class="hint-section">
+                <button class="hint-btn" onclick="toggleHint(4)">💡 Show Hint</button>
+                <div class="hint-content" id="hint4">
+                    Use hashcat mode 18200 or John the Ripper. The password follows a common pattern: Name + Year + special character.
+                </div>
+            </div>
+            <div class="answer-section">
+                <label class="answer-label">Submit the cracked password:</label>
+                <input type="text" class="answer-input" id="answer4" placeholder="password">
+                <button class="submit-btn" onclick="submitAnswer(4)">Submit</button>
+                <div id="result4"></div>
+            </div>
+        </div>
+
+        <!-- Challenge 5 -->
+        <div class="challenge">
+            <div class="challenge-header">
+                <div class="challenge-number">Challenge 5: Service Principal Names</div>
+                <div class="points-badge">100 Points</div>
+            </div>
+            <div class="challenge-title">Kerberoasting - Service Account Discovery</div>
+            <div class="objective">
+                <strong>Objective:</strong> Enumerate service accounts with registered SPNs. Identify the SQL service account that has a privilege escalation path.
+            </div>
+            <div class="hint-section">
+                <button class="hint-btn" onclick="toggleHint(5)">💡 Show Hint</button>
+                <div class="hint-content" id="hint5">
+                    Use <code>GetUserSPNs.py</code> to list service accounts. Request TGS tickets for each. Check group memberships - one account is part of "SQL Admins".
+                </div>
+            </div>
+            <div class="answer-section">
+                <label class="answer-label">Submit the SQL service account username:</label>
+                <input type="text" class="answer-input" id="answer5" placeholder="username">
+                <button class="submit-btn" onclick="submitAnswer(5)">Submit</button>
+                <div id="result5"></div>
+            </div>
+        </div>
+
+        <!-- Challenge 6 -->
+        <div class="challenge">
+            <div class="challenge-header">
+                <div class="challenge-number">Challenge 6: Password in SYSVOL</div>
+                <div class="points-badge">125 Points</div>
+            </div>
+            <div class="challenge-title">Group Policy Preferences Exploitation</div>
+            <div class="objective">
+                <strong>Objective:</strong> Search the SYSVOL share for legacy Group Policy files containing encrypted passwords. Identify the Domain Admin account.
+            </div>
+            <div class="hint-section">
+                <button class="hint-btn" onclick="toggleHint(6)">💡 Show Hint</button>
+                <div class="hint-content" id="hint6">
+                    Mount or access <code>\\domain\SYSVOL</code>. Search recursively for Groups.xml files. Use <code>gpp-decrypt</code> on the cpassword value found.
+                </div>
+            </div>
+            <div class="answer-section">
+                <label class="answer-label">Submit the Domain Admin username in GPP:</label>
+                <input type="text" class="answer-input" id="answer6" placeholder="username">
+                <button class="submit-btn" onclick="submitAnswer(6)">Submit</button>
+                <div id="result6"></div>
+            </div>
+        </div>
+
+        <!-- Challenge 7 -->
+        <div class="challenge">
+            <div class="challenge-header">
+                <div class="challenge-number">Challenge 7: Dangerous Permissions</div>
+                <div class="points-badge">125 Points</div>
+            </div>
+            <div class="challenge-title">DCSync Rights Identification</div>
+            <div class="objective">
+                <strong>Objective:</strong> Identify a standard user account that has been granted dangerous replication permissions on the domain object.
+            </div>
+            <div class="hint-section">
+                <button class="hint-btn" onclick="toggleHint(7)">💡 Show Hint</button>
+                <div class="hint-content" id="hint7">
+                    Use PowerView's <code>Get-DomainObjectAcl</code> or BloodHound. Look for "DS-Replication-Get-Changes" and "DS-Replication-Get-Changes-All" rights. Check user descriptions - IT Support role.
+                </div>
+            </div>
+            <div class="answer-section">
+                <label class="answer-label">Submit the username with DCSync privileges:</label>
+                <input type="text" class="answer-input" id="answer7" placeholder="username">
+                <button class="submit-btn" onclick="submitAnswer(7)">Submit</button>
+                <div id="result7"></div>
+            </div>
+        </div>
+
+        <!-- Challenge 8 -->
+        <div class="challenge">
+            <div class="challenge-header">
+                <div class="challenge-number">Challenge 8: Privilege Escalation Path</div>
+                <div class="points-badge">100 Points</div>
+            </div>
+            <div class="challenge-title">Nested Group Membership Analysis</div>
+            <div class="objective">
+                <strong>Objective:</strong> Analyze group memberships to identify the privilege escalation path from the SQL service account to Domain Admins.
+            </div>
+            <div class="hint-section">
+                <button class="hint-btn" onclick="toggleHint(8)">💡 Show Hint</button>
+                <div class="hint-content" id="hint8">
+                    Use <code>net user /domain</code> or PowerView to check group memberships. The SQL service account is in "SQL Admins" which is nested in another privileged group.
+                </div>
+            </div>
+            <div class="answer-section">
+                <label class="answer-label">Submit the intermediate group name (SQL Admins is nested in):</label>
+                <input type="text" class="answer-input" id="answer8" placeholder="group name">
+                <button class="submit-btn" onclick="submitAnswer(8)">Submit</button>
+                <div id="result8"></div>
+            </div>
+        </div>
+
+        <!-- Challenge 9 -->
+        <div class="challenge">
+            <div class="challenge-header">
+                <div class="challenge-number">Challenge 9: Constrained Delegation</div>
+                <div class="points-badge">100 Points</div>
+            </div>
+            <div class="challenge-title">Kerberos Delegation Abuse</div>
+            <div class="objective">
+                <strong>Objective:</strong> Identify the service account configured for constrained delegation that can be abused to impersonate users.
+            </div>
+            <div class="hint-section">
+                <button class="hint-btn" onclick="toggleHint(9)">💡 Show Hint</button>
+                <div class="hint-content" id="hint9">
+                    Check <code>msDS-AllowedToDelegateTo</code> attribute on service accounts. Look for web service accounts that can delegate to CIFS on the DC.
+                </div>
+            </div>
+            <div class="answer-section">
+                <label class="answer-label">Submit the service account with delegation rights:</label>
+                <input type="text" class="answer-input" id="answer9" placeholder="username">
+                <button class="submit-btn" onclick="submitAnswer(9)">Submit</button>
+                <div id="result9"></div>
+            </div>
+        </div>
+
+        <!-- Challenge 10 -->
+        <div class="challenge">
+            <div class="challenge-header">
+                <div class="challenge-number">Challenge 10: Domain Compromise</div>
+                <div class="points-badge">100 Points</div>
+            </div>
+            <div class="challenge-title">Final Flag Capture</div>
+            <div class="objective">
+                <strong>Objective:</strong> Use any discovered attack path to achieve Domain Admin privileges and retrieve the final flag from the Administrator's desktop.
+            </div>
+            <div class="hint-section">
+                <button class="hint-btn" onclick="toggleHint(10)">💡 Show Hint</button>
+                <div class="hint-content" id="hint10">
+                    Multiple paths available: DCSync, GPP password, Kerberoasting + nested groups. Use secretsdump, psexec, or wmiexec to access the DC. Flag location: <code>C:\Users\Administrator\Desktop\flag.txt</code>
+                </div>
+            </div>
+            <div class="answer-section">
+                <label class="answer-label">Submit the final flag:</label>
+                <input type="text" class="answer-input" id="answer10" placeholder="flag{...}">
+                <button class="submit-btn" onclick="submitAnswer(10)">Submit</button>
+                <div id="result10"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Active Directory Penetration Testing Lab</p>
+        <p>For authorized testing and educational purposes only</p>
+    </div>
+</div>
+
+<script>
+const state = {
+    completed: new Set(),
+    score: 0
+};
+
+const answers = {
+    1: 'guest',
+    2: 'svc-iis',
+    3: 'alice.johnson',
+    4: 'Alice2024!',
+    5: 'svc-sql',
+    6: 'webadmin',
+    7: 'john.doe',
+    8: 'Domain Admins',
+    9: 'svc-web',
+    10: 'flag{xyz_d0m41n_pwn3d_cpts_m4st3r_2024}'
+};
+
+const points = {
+    1: 75,
+    2: 100,
+    3: 75,
+    4: 100,
+    5: 100,
+    6: 125,
+    7: 125,
+    8: 100,
+    9: 100,
+    10: 100
+};
+
+function toggleHint(num) {
+    const hint = document.getElementById(`hint${num}`);
+    hint.classList.toggle('show');
+}
+
+function submitAnswer(num) {
+    const input = document.getElementById(`answer${num}`);
+    const result = document.getElementById(`result${num}`);
+    const userAnswer = input.value.trim();
+    
+    if (state.completed.has(num)) {
+        result.innerHTML = '<div class="result correct">Already completed ✓</div>';
+        return;
+    }
+    
+    if (userAnswer.toLowerCase() === answers[num].toLowerCase()) {
+        state.completed.add(num);
+        state.score += points[num];
+        result.innerHTML = `<div class="result correct">✓ Correct! +${points[num]} points</div>`;
+        input.disabled = true;
+        updateStats();
+    } else {
+        result.innerHTML = '<div class="result incorrect">✗ Incorrect. Try again.</div>';
+        setTimeout(() => {
+            result.innerHTML = '';
+        }, 3000);
+    }
+}
+
+function updateStats() {
+    const completed = state.completed.size;
+    const progress = Math.round((state.score / 1000) * 100);
+    
+    document.getElementById('completedCount').textContent = `${completed}/10`;
+    document.getElementById('scoreCount').textContent = `${state.score}/1000`;
+    document.getElementById('progressPercent').textContent = `${progress}%`;
+}
+</script>
+
+</body>
+</html>
