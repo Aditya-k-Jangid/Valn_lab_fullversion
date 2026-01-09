@@ -128,6 +128,5 @@ To remove all vulnerable configurations:
 - Complete domain compromise methodologies
 
 ---
-
 **Happy Hacking!** 
 ```
