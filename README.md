@@ -1,4 +1,4 @@
-```markdown
+
 # Active Directory Penetration Testing Lab
 
 A vulnerable AD lab environment for practicing CPTS-style penetration testing 
